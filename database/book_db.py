@@ -55,3 +55,50 @@ class Book:
         conn.close()
         return {"the book update successfuly"}
     
+
+    def count_total_books(self):
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(*) FROM books")
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return result 
+    
+
+    def count_available_books(self):
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(*) FROM books WHERE is_available=True")
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return result 
+    
+    def count_borrowed_books(self):
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(*) FROM books WHERE is_available=False")
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return result 
+    
+    def count_by_genre(self,genre):
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(%s) FROM books",(genre,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return result 
+    
+    def count_active_borrows_by_member(self,member_id):
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM books WHERE borrowed_by_member_id = %s LIMIT 3",(member_id,))
+        result = cursor.fetchall()
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return result
