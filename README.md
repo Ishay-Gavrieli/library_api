@@ -24,7 +24,8 @@ library-api/
 │   │   ├── book_routes.py  
 │   │   ├── member_routes.py  
 │   │   └── report_routes.py  
-│   └── logs/  
+│   └── logs/
+|       ├── basic_logger.py
 │       └── app.log  
 │  
 ├── README.md  
