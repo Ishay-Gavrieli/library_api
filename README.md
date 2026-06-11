@@ -12,25 +12,24 @@ docker:docker exec -it mysql-library_db mysql -u root -p
 
 
 ## 3.
-library-api/  
-│  
-├── app/  
-│   ├── main.py  
-│   ├── database/  
-│   │   ├── db_connection.py  
-│   │   ├── book_db.py  
-│   │   └── member_db.py  
-│   ├── routes/  
-│   │   ├── book_routes.py  
-│   │   ├── member_routes.py  
-│   │   └── report_routes.py  
-│   └── logs/
-|       ├── basic_logger.py
-│       └── app.log  
-│  
-├── README.md  
-├── requirements.txt  
-└── .gitignore
+library-api/
+│
+│
+├── main.py
+├── database/
+│ ├── db_connection.py
+│ ├── book_db.py
+│ └── member_db.py
+├── routes/
+│ ├── book_routes.py
+│ ├── member_routes.py
+│ └── report_routes.py
+├── logs/
+│ └── app.log
+│
+├── README.md
+├── requirements.txt
+└── .gitignore 
 
 
 ## 4.
@@ -103,7 +102,6 @@ Http Request -> Fastapi -> Endpoint -> Query -> Database
 # commands
 python -m venv venv
 venv\Scripts\activate
-cd app
 python main.py
 pip install -r requierments
 (fastapi,uvicorn,mysql-connector-python)
