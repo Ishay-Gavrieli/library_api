@@ -1,7 +1,9 @@
 # plan for the project
 
 ## 1. 
-A library data management system that is responsible for creating books, updating books, borrowing and returning them to the user, creating library members, updating them, deactivating and activating them, and it can return data about the users and the books. All of this is created and transferred to mysql and through the api server the system connects to a database, the system works through http requests in swagger.
+A library data management system that is responsible for creating books, updating books, borrowing and returning them to the member.
+the actions: creating library members, updating them, deactivating and activating them, and it can return data about the users and the books. 
+
 
 ## 2.
 docker: docker run --name  mysql-library_db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=library_db -p 3309:3306 -d mysql:latest
