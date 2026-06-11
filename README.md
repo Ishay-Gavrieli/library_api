@@ -47,8 +47,11 @@ id_member_by_borrowed INT DEFAULT NULL
 id INT PRIMARY KEY AUTO_INCREMENT
 name varchar(50) NOT NULL 
 email UNIQUE NOT NULL 
-is_active NOT NULL DEFAULT FALSE 
-borrows_total INT NOT NULL
+email varchar(50) UNIQUE NOT NULL, 
+is_active BOOLEAN NOT NULL DEFAULT FALSE,
+ 
+    
+    
 
 
 
@@ -99,6 +102,7 @@ Http Request -> Fastapi -> Endpoint -> Query -> Database
 # commands
 python -m venv venv
 venv\Scripts\activate
+cd app
 python main.py
 pip install -r requierments
 (fastapi,uvicorn,mysql-connector-python)
