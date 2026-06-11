@@ -39,8 +39,8 @@ id INT PRIMARY KEY AUTO_INCREMENT
 title varchar(50) NOT NULL 
 author varchar(50) NOT NULL
 genre ENUM("Fiction","Non-Fiction","Science","History","Other") NOT NULL
-available_is BOOLEAN NOT NULL DEFAULT TRUE
-id_member_by_borrowed INT DEFAULT NULL 
+is_available BOOLEAN NOT NULL DEFAULT TRUE
+borrowed_by_number_id INT DEFAULT NULL 
 
 
 # members table:
@@ -49,6 +49,7 @@ name varchar(50) NOT NULL
 email UNIQUE NOT NULL 
 email varchar(50) UNIQUE NOT NULL, 
 is_active BOOLEAN NOT NULL DEFAULT FALSE,
+total_borrows INT NOT NULL
  
     
     
