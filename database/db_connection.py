@@ -22,14 +22,14 @@ def create_tables():
     author varchar(50) NOT NULL,
     genre ENUM("Fiction","Non-Fiction","Science","History","Other") NOT NULL,
     is_available BOOLEAN NOT NULL DEFAULT TRUE,
-    borrowed_by_number_id INT DEFAULT NULL);"""
+    borrowed_by_member_id INT DEFAULT NULL);"""
 
     table_2 = """CREATE TABLE IF NOT EXISTS members(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name varchar(50) NOT NULL, 
     email varchar(50) UNIQUE NOT NULL, 
     is_active BOOLEAN NOT NULL DEFAULT FALSE, 
-    total_borrows INT NOT NULL);"""
+    total_borrows INT NOT NULL DEFAULT 0);"""
 
     cursor.execute(table_1)
     cursor.execute(table_2)

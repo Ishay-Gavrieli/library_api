@@ -10,3 +10,23 @@ instance = Book()
 def create_book(data:dict):
     return instance.create(data)
 
+
+
+@router_in_book.get("")
+def all_books():
+    return instance.get_all_books()
+
+
+@router_in_book.get("/{id}")
+def book_by_id(id:int):
+    return instance.get_book_by_id(id)
+
+
+@router_in_book.put("/{id}")
+def update_book(id, data:dict):
+    return instance.update_book(id,data)
+
+
+@router_in_book.put("/{id}/return/{member_id}")
+def update_available(id:int, val,member_id):
+    return instance.set_available(id,val,member_id)
