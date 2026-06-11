@@ -40,7 +40,7 @@ title varchar(50) NOT NULL
 author varchar(50) NOT NULL
 genre ENUM("Fiction","Non-Fiction","Science","History","Other") NOT NULL
 available_is BOOLEAN NOT NULL DEFAULT TRUE
-id_member_by_borrowed DEFAULT NULL 
+id_member_by_borrowed INT DEFAULT NULL 
 
 
 # members table:
