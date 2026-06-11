@@ -33,7 +33,7 @@ library-api/
 
 
 ## 4.
-books table:
+# books table:
 id INT PRIMARY KEY AUTO_INCREMENT
 title varchar(50) NOT NULL 
 author varchar(50) NOT NULL
@@ -42,7 +42,7 @@ available_is BOOLEAN NOT NULL DEFAULT TRUE
 id_member_by_borrowed DEFAULT NULL 
 
 
-members table:
+# members table:
 id INT PRIMARY KEY AUTO_INCREMENT
 name varchar(50) NOT NULL 
 email UNIQUE NOT NULL 
@@ -52,7 +52,7 @@ borrows_total INT NOT NULL
 
 
 ## 5.
-System rules:
+# System rules:
 1. When creating a book, the user sends genre/author/title and the function should update
 is_available=True, borrowed_by=NULL
 
@@ -91,9 +91,11 @@ GET /reports/top-member : the most active member
 
 
 ## 7.
+# system flow
 Http Request -> Fastapi -> Endpoint -> Query -> Database
 
 ## 8.
+# commands
 python -m venv venv
 venv\Scripts\activate
 python main.py
