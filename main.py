@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 from database import db_connection
-from routes import book_routes
+from routes import book_routes,report_routes,member_routes
 
 app = FastAPI()
 
@@ -13,7 +13,10 @@ def description():
 
 app.include_router(book_routes.router_in_book,prefix="/books")
 
+app.include_router(report_routes.router_in_report,prefix="/reports")
 
+
+app.include_router(member_routes.router_in_member,prefix="/members")
 
 
 if __name__=="__main__":

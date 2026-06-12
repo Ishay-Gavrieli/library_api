@@ -32,22 +32,9 @@ def update_available(id:int, val,member_id):
     return instance.set_available(id,val,member_id)
 
 
-@router_in_book.get("/reports/summary")
-def count_books(condition: bool = None):
-    if condition == True:
-        return instance.count_available_books()
-    elif condition == False:
-        return instance.count_borrowed_books()
-
-    return instance.count_total_books()
 
 
-@router_in_book.get("/reports/books-by-genre")
-def count_books_by_genre(genre):
-    return instance.count_by_genre(genre)
-
-
-@router_in_book.put("/books/{id}/borrow/{member_id}")
+@router_in_book.put("/{id}/borrow/{member_id}")
 def count_active_by_member(id,member_id):
     data = instance.count_active_borrows_by_member(member_id)
     return {"id":id , "data":data}
