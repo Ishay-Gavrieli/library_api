@@ -40,12 +40,3 @@ def create_tables():
 
 
 
-
-def new():
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("DESCRIBE books;")
-    reasult = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return reasult

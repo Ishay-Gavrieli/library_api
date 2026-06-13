@@ -16,6 +16,7 @@ class Members:
             conn.commit()
             cursor.close()
             conn.close()
+            logger.info("the member created successfuly")
             return {"the member created successfuly"}
         except:
             logger.error("faild to create")

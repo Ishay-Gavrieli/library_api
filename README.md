@@ -45,9 +45,8 @@ borrowed_by_member_id INT DEFAULT NULL
 # members table:
 id INT PRIMARY KEY AUTO_INCREMENT
 name varchar(50) NOT NULL 
-email UNIQUE NOT NULL 
-email varchar(50) UNIQUE NOT NULL, 
-is_active BOOLEAN NOT NULL DEFAULT FALSE,
+email varchar(50) UNIQUE NOT NULL
+is_active BOOLEAN NOT NULL DEFAULT FALSE
 total_borrows INT NOT NULL DEFAULT 0
  
     

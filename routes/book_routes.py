@@ -30,15 +30,15 @@ def update_book(id, data:dict):
 
 
 @router_in_book.put("/{id}/return/{member_id}")
-def update_available(id:int, val,member_id):
-    return instance.set_available(id,val,member_id)
+def return_book(id:int):
+    return instance.return_book(id)
 
 
 
 
 @router_in_book.put("/{id}/borrow/{member_id}")
-def count_active_by_member(id,member_id):
-    data = instance.count_active_borrows_by_member(member_id)
-    return {"id":id , "data":data}
+def boorow_book_by_member(id:int,member_id:int):
+    return instance.borrows_by_member_id(id,member_id)
+
 
 
