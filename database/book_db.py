@@ -142,32 +142,40 @@ class Book:
             logger.error("faild")
             raise HTTPException(status_code=500,detail="faild")
     
-    def borrows_by_member_id(self,id:int,member_id:int):
+    def borrow_book(self, id: int, member_id: int):
         try:
-            logger.info("borrow book by mumber_id")
+            logger.info("Attempting to borrow book")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("select count(*) FROM books WHERE borrowed_by_member_id = %s",(member_id,))
-            if cursor.fetchone()["total_borrows"] >= 3:
-                logger.error("member has reached maximum borrows")
-                raise HTTPException(status_code=400,detail="member has reached maximum borrows")
-            cursor.execute("select is_available FROM books where id = %s",(id,))
-            result = cursor.fetchone()
-            if not result or not result['is_available']:
-                logger.error("the book is not avalible")
-                raise HTTPException(status_code=400,detail="the book is not avalible")
-            cursor.execute("select is_active FROM members where id = %s",(member_id,))
-            result = cursor.fetchone()
-            if not result or not result["is_active"]:
-                logger.error("the member is not active")
-                raise HTTPException(status_code=400,detail="the member is not active")
-            cursor.execute("update books set is_available = False , borrowed_by_member_id = %s where id = %s",(member_id,id))
-            cursor.execute("update members set total_borrows = total_borrows + 1 where id = %s",(member_id,))
+
+            cursor.execute("SELECT count(*) as total FROM books WHERE borrowed_by_member_id = %s", (member_id,))
+            count_result = cursor.fetchone()
+            if count_result["total"] >= 3:
+                raise HTTPException(status_code=400, detail="Member reached maximum borrows")
+
+            cursor.execute("SELECT is_available FROM books WHERE id = %s", (id,))
+            book = cursor.fetchone()
+            if not book or not book['is_available']:
+                raise HTTPException(status_code=400, detail="The book is not available")
+
+            cursor.execute("SELECT is_active FROM members WHERE id = %s", (member_id,))
+            member = cursor.fetchone()
+            if not member or not member["is_active"]:
+                raise HTTPException(status_code=400, detail="The member is not active")
+
+            cursor.execute("UPDATE books SET is_available = False, borrowed_by_member_id = %s WHERE id = %s", (member_id, id))
+            cursor.execute("UPDATE members SET total_borrows = total_borrows + 1 WHERE id = %s", (member_id,))
+            
             conn.commit()
+            logger.info("The book borrowed successfully")
+            return {"message": "The book borrowed successfully"}
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to borrow book: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+            
+        finally:
             cursor.close()
             conn.close()
-            logger.info("the book borrowed successfuly")
-            return {"the book borrowed successfuly"}
-        except Exception as e:
-            logger.error(f"faild {e}")
-            raise HTTPException(status_code=500,detail="faild")
