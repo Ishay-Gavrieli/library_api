@@ -154,3 +154,20 @@ class Members:
             conn.close()
 
 
+
+    def increament_borrows(self,id:int):
+        try:
+            logger.info("try to increament total borrows")
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("UPDATE members SET total_borrows = total_borrows + 1 WHERE id = %s", (id,))
+            cursor.commit()
+            logger.info("success to increament total borrows")
+        except HTTPException:
+                raise
+        except Exception as e:
+            logger.error(f"Failed to increament total borrows:{e}")
+            raise HTTPException(status_code=500,detail="Internal server error")
+        finally:
+            cursor.close()
+            conn.close()

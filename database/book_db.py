@@ -1,6 +1,9 @@
 from database.db_connection import get_connection
 import logging
 from fastapi import HTTPException
+from database.member_db import Members
+
+instance_member = Members()
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +154,7 @@ class Book:
                 raise HTTPException(status_code=400, detail="The member is not active")
 
             cursor.execute("UPDATE books SET is_available = False, borrowed_by_member_id = %s WHERE id = %s", (member_id, id))
-            cursor.execute("UPDATE members SET total_borrows = total_borrows + 1 WHERE id = %s", (member_id,))
+            cursor.execute(instance_member.increament_borrows())
             
             conn.commit()
             logger.info("The book borrowed successfully")
