@@ -141,9 +141,9 @@ class Members:
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT * FROM members ORDER BY total_borrows DESC LIMIT 1")
-            result = cursor.fetchall()
+            result = cursor.fetchone()
             logger.info("success to return the top borrows member")
-            return result
+            return {"member_id": result["id"], "borrowed": result["total_borrows"]}
         except HTTPException:
             raise
         except Exception as e:
@@ -155,13 +155,13 @@ class Members:
 
 
 
-    def increament_borrows(self,id:int):
+    def increment_borrows(self,id:int):
         try:
             logger.info("try to increament total borrows")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("UPDATE members SET total_borrows = total_borrows + 1 WHERE id = %s", (id,))
-            cursor.commit()
+            conn.commit()
             logger.info("success to increament total borrows")
         except HTTPException:
                 raise

@@ -93,11 +93,11 @@ class Book:
                 cursor = conn.cursor(dictionary=True)
 
                 cursor.execute("SELECT * FROM books WHERE id = %s",(id,))
-                book = cursor.fhetchone()
+                book = cursor.fetchone()
                 if not book:
                      raise HTTPException(status_code=404, detail="The book not found")
                 if book["is_available"]:
-                    raise HTTPException(status_code=400, detail="The book not borrowed")
+                    raise HTTPException(status_code=404, detail="The book not borrowed")
                 
                 cursor.execute("SELECT * FROM members WHERE id = %s", (member_id,))
                 member = cursor.fetchone()
@@ -154,7 +154,7 @@ class Book:
                 raise HTTPException(status_code=400, detail="The member is not active")
 
             cursor.execute("UPDATE books SET is_available = False, borrowed_by_member_id = %s WHERE id = %s", (member_id, id))
-            cursor.execute(instance_member.increament_borrows())
+            instance_member.increment_borrows(member_id)
             
             conn.commit()
             logger.info("The book borrowed successfully")
