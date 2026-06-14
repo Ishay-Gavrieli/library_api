@@ -22,8 +22,8 @@ def count_books():
 
 
 @router_in_report.get("/books-by-genre")
-def count_books_by_genre(genre):
-    return instance.count_by_genre(genre)
+def count_books_by_genre():
+    return instance.count_by_genre()
 
 
 @router_in_report.get("/top-member")

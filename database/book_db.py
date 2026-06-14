@@ -227,15 +227,15 @@ class Book:
 
 
 
-    def count_by_genre(self,genre):
+    def count_by_genre(self):
         try:
             logger.info("try to count by genre")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) as genre FROM books where genre = %s",(genre,))
-            result = cursor.fetchone()
+            cursor.execute("SELECT genre,count(*) as count from books group by genre")
+            result = cursor.fetchall()
             logger.info("success to count by genre")
-            return {"Genre": genre, "COUNT": result["genre"]}
+            return result
         except HTTPException:
             raise
         except Exception as e:
