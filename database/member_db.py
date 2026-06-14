@@ -103,13 +103,13 @@ class Members:
             logger.info("count activate member")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) FROM members WHERE is_active = True")
-            result = cursor.fetchall()
+            cursor.execute("SELECT COUNT(*) as active FROM members WHERE is_active = True")
+            result = cursor.fetchone()
             cursor.close()
             conn.close()
-            return result
-        except:
-            logger.error("faild")
+            return result["active"]
+        except Exception as e:
+            logger.error(f"faild {e}")
             raise HTTPException(status_code=500,detail="faild")
 
     def get_top_member(self):
@@ -117,13 +117,13 @@ class Members:
             logger.info("return the top borrows member")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT MAX(total_borrows) FROM members")
+            cursor.execute("SELECT * FROM members ORDER BY total_borrows DESC LIMIT 1")
             result = cursor.fetchall()
             cursor.close()
             conn.close()
             return result
-        except: 
-            logger.error("faild")
+        except Exception as e: 
+            logger.error(f"faild {e}")
             raise HTTPException(status_code=500,detail="faild")
         
 

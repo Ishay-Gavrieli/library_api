@@ -69,80 +69,43 @@ class Book:
             raise HTTPException(status_code=500,detail="faild")
 
 
-    def return_book(self,id:int):
-        try:
-            logger.info("return book")
-            conn = get_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("UPDATE books SET is_available = True , borrowed_by_member_id =NULL WHERE id = %s",(id,))
-            conn.commit()
-            cursor.close()
-            conn.close()
-            logger.info("the book return successfuly")
-            return {"the book return successfuly"}
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
 
-    def count_total_books(self):
-        try:
-            logger.info("count total books")
-            conn = get_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) FROM books")
-            result = cursor.fetchone()
-            cursor.close()
-            conn.close()
-            return result 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
+    def set_available(self,id,member_id,val):
+        if not val:
+            try:
+                logger.info("return book")
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("select * from books where id = %s",(id,))
+                if not cursor.fetchone():
+                     raise HTTPException(status_code=404, detail="The book not found")
+                
+                cursor.execute("SELECT * FROM members WHERE id = %s", (member_id,))
+                member = cursor.fetchone()
+                if not member:
+                    raise HTTPException(status_code=404, detail="The member not found")
+                
+                cursor.execute("SELECT is_available FROM books WHERE id = %s",(id,))
+                if not cursor.fetchone():
+                    raise HTTPException(status_code=400, detail="The book not borrowed")
+                
+
+                cursor.execute("SELECT borrowed_by_member_id FROM books WHERE borrowed_by_member_id = %s and id = %s", (member_id,id))
+                if not cursor.fetchone():
+                    raise HTTPException(status_code=400, detail="The book is not borrowed by this member")
 
 
-    def count_available_books(self):
-        try:
-            logger.info("count available books")
-            conn = get_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) FROM books WHERE is_available=True")
-            result = cursor.fetchone()
-            cursor.close()
-            conn.close()
-            return result 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
+                cursor.execute("UPDATE books SET is_available = True , borrowed_by_member_id = NULL WHERE id = %s",(id,))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                logger.info("the book return successfuly")
+                return {"the book return successfuly"}
+            except Exception as e :
+                logger.error(f"faild {e}")
+                raise HTTPException(status_code=500,detail="faild")
 
 
-    def count_borrowed_books(self):
-        try:
-            logger.info("count borrowed books")
-            conn = get_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(*) FROM books WHERE is_available=False")
-            result = cursor.fetchone()
-            cursor.close()
-            conn.close()
-            return result 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-    
-    def count_by_genre(self,genre):
-        try:
-            logger.info("count by genre")
-            conn = get_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT COUNT(%s) FROM books",(genre,))
-            result = cursor.fetchone()
-            cursor.close()
-            conn.close()
-            return result 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-    
-    def borrow_book(self, id: int, member_id: int):
         try:
             logger.info("Attempting to borrow book")
             conn = get_connection()
@@ -152,11 +115,21 @@ class Book:
             count_result = cursor.fetchone()
             if count_result["total"] >= 3:
                 raise HTTPException(status_code=400, detail="Member reached maximum borrows")
+            
+            cursor.execute("SELECT * FROM books WHERE id = %s", (id,))
+            book = cursor.fetchone()
+            if not book:
+                raise HTTPException(status_code=400, detail="The book not found")
 
             cursor.execute("SELECT is_available FROM books WHERE id = %s", (id,))
             book = cursor.fetchone()
-            if not book or not book['is_available']:
+            if not book or not book["is_available"]:
                 raise HTTPException(status_code=400, detail="The book is not available")
+            
+            cursor.execute("SELECT * FROM members WHERE id = %s", (member_id,))
+            member = cursor.fetchone()
+            if not member:
+                raise HTTPException(status_code=404, detail="The member not found")
 
             cursor.execute("SELECT is_active FROM members WHERE id = %s", (member_id,))
             member = cursor.fetchone()
@@ -179,3 +152,77 @@ class Book:
         finally:
             cursor.close()
             conn.close()
+
+    
+    def count_total_books(self):
+        try:
+            logger.info("count total books")
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) as total FROM books")
+            result = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            return result["total"] 
+        except:
+            logger.error("faild")
+            raise HTTPException(status_code=500,detail="faild")
+
+
+    def count_available_books(self):
+        try:
+            logger.info("count available books")
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) as available FROM books WHERE is_available=True")
+            result = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            return result["available"] 
+        except:
+            logger.error("faild")
+            raise HTTPException(status_code=500,detail="faild")
+
+
+    def count_borrowed_books(self):
+        try:
+            logger.info("count borrowed books")
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) borrows FROM books WHERE is_available=False")
+            result = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            return result["borrows"] 
+        except:
+            logger.error("faild")
+            raise HTTPException(status_code=500,detail="faild")
+    
+    def count_by_genre(self,genre):
+        try:
+            logger.info("count by genre")
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) as genre FROM books where genre = %s",(genre,))
+            result = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            return {"Genre": genre, "COUNT": result["genre"]}
+        except Exception as e :
+            logger.error(f"faild {e}")
+            raise HTTPException(status_code=500,detail="faild")
+
+
+    def count_active_borrows_by_member(self,member_id:int):
+        try:
+            logger.info("count active borrows by member")
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT COUNT(*) as total FROM books where  borrowed_by_member_id = %s",(member_id,))
+            result = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            return result["total"]
+        except Exception as e :
+            logger.error(f"faild {e}")
+            raise HTTPException(status_code=500,detail="faild")

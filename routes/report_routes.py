@@ -10,19 +10,15 @@ instance_member = Members()
 
 
 @router_in_report.get("/summary")
-def count_books(condition: bool = None):
-    if condition == True:
-        data_books = instance.count_available_books()
-        data_members = instance_member.count_active_members()
-        return {"data_books":data_books,"data_members":data_members}
-    elif condition == False:
-        data_books = instance.count_borrowed_books()
-        data_members = instance_member.count_active_members()
-        return {"data_books":data_books,"data_members":data_members}
-
-    data_books = instance.count_total_books()
-    data_members = instance_member.count_active_members()
-    return {"data_books":data_books,"data_members":data_members}
+def count_books():
+    count_available = instance.count_available_books()
+    count_active = instance_member.count_active_members()
+    count_borrowed = instance.count_borrowed_books()
+    count_total = instance.count_total_books()
+    return {"total_books": count_total,
+            "available_books": count_available,
+            "currently_borrowed": count_borrowed,
+            "active_members": count_active}
 
 
 @router_in_report.get("/books-by-genre")
