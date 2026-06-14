@@ -13,67 +13,79 @@ class Book:
             sql = "INSERT INTO books (title,author,genre) values (%s,%s,%s)"
             cursor.execute(sql,(data["title"],data["author"],data["genre"]))
             conn.commit()
+            logger.info("the book created successfuly")
+            return {"massage":"the book created successfuly"}
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to create book: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            logger.info("the book created successfuly")
-            return {"the book created successfuly"}
-        except:
-            logger.error("faild to create")
-            raise HTTPException(status_code=500,detail="faild to create")
 
 
     def get_all_books(self):
         try:
-            logger.info("get all books")
+            logger.info("try to get all books")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT * FROM books;")
             result = cursor.fetchall()
+            logger.info("success to get all books")
+            return result
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to get all books: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return result
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-
 
     def get_book_by_id(self,id:int):
         try:
-            logger.info("get book by id")
+            logger.info("try to get book by id")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT * FROM books WHERE id = %s",(id,))
             result = cursor.fetchone()
+            logger.info("success to get book by id")
+            return result if result else None
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to get book by id: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return result if result else None
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-
 
 
     def update_book(self,id:int, data:dict):
         try:
-            logger.info("update book")
+            logger.info("try to update book")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             sql = "UPDATE books SET title = %s, author = %s, genre = %s, is_available = %s , borrowed_by_member_id = %s WHERE id = %s "
             cursor.execute(sql,(data["title"],data["author"],data["genre"],data["is_available"],data["borrowed_by_member_id"],id))
             conn.commit()
+            logger.info("success to update book")
+            return {"massage":"the book update successfuly"}
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to update book: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return {"the book update successfuly"}
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-
 
 
     def set_available(self,id,member_id,val):
         if not val:
             try:
-                logger.info("return book")
+                logger.info("try to return book")
                 conn = get_connection()
                 cursor = conn.cursor(dictionary=True)
                 cursor.execute("select * from books where id = %s",(id,))
@@ -100,10 +112,12 @@ class Book:
                 cursor.close()
                 conn.close()
                 logger.info("the book return successfuly")
-                return {"the book return successfuly"}
-            except Exception as e :
-                logger.error(f"faild {e}")
-                raise HTTPException(status_code=500,detail="faild")
+                return {"massage":"the book return successfuly"}
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"Failed to return book: {e}")
+                raise HTTPException(status_code=500, detail="Internal server error")
 
 
         try:
@@ -156,73 +170,92 @@ class Book:
     
     def count_total_books(self):
         try:
-            logger.info("count total books")
+            logger.info("try to calculate total books")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT COUNT(*) as total FROM books")
             result = cursor.fetchone()
+            logger.info("success to calculate total books")
+            return result["total"] 
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to calculate total books: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return result["total"] 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-
 
     def count_available_books(self):
         try:
-            logger.info("count available books")
+            logger.info("try to count available books")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT COUNT(*) as available FROM books WHERE is_available=True")
             result = cursor.fetchone()
+            logger.info("success to count available books")
+            return result["available"] 
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to count available books: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return result["available"] 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-
 
     def count_borrowed_books(self):
         try:
-            logger.info("count borrowed books")
+            logger.info("try to count borrowed books")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT COUNT(*) borrows FROM books WHERE is_available=False")
             result = cursor.fetchone()
+            logger.info("success to count borrowed books")
+            return result["borrows"] 
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to count borrowed books: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return result["borrows"] 
-        except:
-            logger.error("faild")
-            raise HTTPException(status_code=500,detail="faild")
-    
+
+
+
     def count_by_genre(self,genre):
         try:
-            logger.info("count by genre")
+            logger.info("try to count by genre")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT COUNT(*) as genre FROM books where genre = %s",(genre,))
             result = cursor.fetchone()
+            logger.info("success to count by genre")
+            return {"Genre": genre, "COUNT": result["genre"]}
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to count by genre: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return {"Genre": genre, "COUNT": result["genre"]}
-        except Exception as e :
-            logger.error(f"faild {e}")
-            raise HTTPException(status_code=500,detail="faild")
-
 
     def count_active_borrows_by_member(self,member_id:int):
         try:
-            logger.info("count active borrows by member")
+            logger.info("try to count active borrows by member")
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT COUNT(*) as total FROM books where  borrowed_by_member_id = %s",(member_id,))
             result = cursor.fetchone()
+            logger.info("success to count active borrows by member")
+            return result["total"]
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to count active borrows by member: {e}")
+            raise HTTPException(status_code=500, detail="Internal server error")
+        finally:
             cursor.close()
             conn.close()
-            return result["total"]
-        except Exception as e :
-            logger.error(f"faild {e}")
-            raise HTTPException(status_code=500,detail="faild")
