@@ -8,12 +8,14 @@ app = FastAPI()
 db_connection.create_tables()
 
 
-app.include_router(book_routes.router_in_book,prefix="/books")
-
-app.include_router(report_routes.router_in_report,prefix="/reports")
+app.include_router(book_routes.router_in_book,prefix="/books",tags=["books"])
 
 
-app.include_router(member_routes.router_in_member,prefix="/members")
+app.include_router(member_routes.router_in_member,prefix="/members",tags=["members"])
+
+
+app.include_router(report_routes.router_in_report,prefix="/reports",tags=["reports"])
+
 
 
 if __name__=="__main__":

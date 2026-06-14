@@ -14,7 +14,7 @@ class Book:
             cursor.execute(sql,(data["title"],data["author"],data["genre"]))
             conn.commit()
             logger.info("the book created successfuly")
-            return {"massage":"the book created successfuly"}
+            return {"message":"the book created successfuly"}
         except HTTPException:
             raise
         except Exception as e:
@@ -71,7 +71,7 @@ class Book:
             cursor.execute(sql,(data["title"],data["author"],data["genre"],data["is_available"],data["borrowed_by_member_id"],id))
             conn.commit()
             logger.info("success to update book")
-            return {"massage":"the book update successfuly"}
+            return {"message":"the book update successfuly"}
         except HTTPException:
             raise
         except Exception as e:
@@ -88,18 +88,18 @@ class Book:
                 logger.info("try to return book")
                 conn = get_connection()
                 cursor = conn.cursor(dictionary=True)
-                cursor.execute("select * from books where id = %s",(id,))
-                if not cursor.fetchone():
+
+                cursor.execute("SELECT * FROM books WHERE id = %s",(id,))
+                book = cursor.fhetchone()
+                if not book:
                      raise HTTPException(status_code=404, detail="The book not found")
+                if book["is_available"]:
+                    raise HTTPException(status_code=400, detail="The book not borrowed")
                 
                 cursor.execute("SELECT * FROM members WHERE id = %s", (member_id,))
                 member = cursor.fetchone()
                 if not member:
                     raise HTTPException(status_code=404, detail="The member not found")
-                
-                cursor.execute("SELECT is_available FROM books WHERE id = %s",(id,))
-                if not cursor.fetchone():
-                    raise HTTPException(status_code=400, detail="The book not borrowed")
                 
 
                 cursor.execute("SELECT borrowed_by_member_id FROM books WHERE borrowed_by_member_id = %s and id = %s", (member_id,id))
@@ -109,16 +109,16 @@ class Book:
 
                 cursor.execute("UPDATE books SET is_available = True , borrowed_by_member_id = NULL WHERE id = %s",(id,))
                 conn.commit()
-                cursor.close()
-                conn.close()
                 logger.info("the book return successfuly")
-                return {"massage":"the book return successfuly"}
+                return {"message":"the book return successfuly"}
             except HTTPException:
                 raise
             except Exception as e:
                 logger.error(f"Failed to return book: {e}")
                 raise HTTPException(status_code=500, detail="Internal server error")
-
+            finally:
+                cursor.close()
+                conn.close()
 
         try:
             logger.info("Attempting to borrow book")

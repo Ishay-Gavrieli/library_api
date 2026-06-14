@@ -15,7 +15,7 @@ class Members:
             cursor.execute(sql,(data["name"],data["email"]))
             conn.commit()
             logger.info("the member created successfuly")
-            return {"massage":"the member created successfuly"}
+            return {"message":"the member created successfuly"}
         except HTTPException:
             raise
         except Exception as e:
@@ -70,7 +70,7 @@ class Members:
             cursor.execute(sql,(data["name"],data["email"],data["is_active"],data["total_borrows"],id))
             conn.commit()
             logger.info("success to update member")
-            return {"massage":"the member update successfuly"}
+            return {"message":"the member update successfuly"}
         except HTTPException:
             raise
         except Exception as e:
@@ -88,7 +88,7 @@ class Members:
             cursor.execute("UPDATE members SET is_active = false WHERE id = %s",(id,))
             conn.commit()
             logger.info("success to update deactivate member")
-            return {"massage":"the member update successfuly"}
+            return {"message":"the member update successfuly"}
         except HTTPException:
             raise
         except Exception as e:
@@ -107,7 +107,7 @@ class Members:
             cursor.execute("UPDATE members SET is_active = True WHERE id = %s",(id,))
             conn.commit()
             logger.info("success to update activate member")
-            return {"massage":"the member update successfuly"}
+            return {"message":"the member update successfuly"}
         except HTTPException:
             raise
         except Exception as e:
@@ -148,7 +148,7 @@ class Members:
             raise
         except Exception as e:
             logger.error(f"Failed to return the top borrows member:{e}")
-            HTTPException(status_code=500,detail="Internal server error")
+            raise HTTPException(status_code=500,detail="Internal server error")
         finally:
             cursor.close()
             conn.close()
