@@ -1,7 +1,8 @@
-from logs.basic_logger import logger
+import logging
 import mysql.connector
 
 
+logger = logging.getLogger(__name__)
 
 def get_connection():
     return mysql.connector.connect(
@@ -12,6 +13,7 @@ def get_connection():
         database="library_db"
     )
 
+logger.info("create the connection")
 
 def create_tables():
     conn = get_connection()

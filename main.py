@@ -8,6 +8,7 @@ app = FastAPI()
 db_connection.create_tables()
 
 
+
 app.include_router(book_routes.router_in_book,prefix="/books",tags=["books"])
 
 
